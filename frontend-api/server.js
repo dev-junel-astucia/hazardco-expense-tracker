@@ -11,6 +11,22 @@ const {
 const PORT = 3000;
 
 const server = http.createServer((req, res) => {
+  // set cors header
+  res.setHeader('Access-Control-Allow-Origin', '*'); // allow all for the mean time
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PATCH, DELETE, OPTIONS'
+  );
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204); // No Content
+    res.end();
+    return;
+  }
+
   res.setHeader('Content-Type', 'application/json');
 
   let pathname = url.parse(req.url).pathname;
