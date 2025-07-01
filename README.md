@@ -18,3 +18,5 @@ Built on Pure Node.js as part of the requirements (without using Express or othe
 On the `frontend-api` folder, open the terminal (integrated terminal if you're in VS Code)
 
 Run `node server.js` to start the server. `nodemon server.js` if you have globally installed.
+
+Endpoint: `http://localhost:3000/api/expenses`
