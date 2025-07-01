@@ -1,0 +1,79 @@
+<form [formGroup]="form">
+  <div class="mb-3 mt-3">
+    <label for="title" class="form-label">Title:</label>
+    <input
+      type="text"
+      class="form-control"
+      id="title"
+      placeholder=""
+      name="title"
+      formControlName="title"
+    />
+    <div
+      class="invalid-field"
+      *ngIf="form.controls.title?.invalid && form.controls.title?.touched"
+    >
+      Title is required.
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="amount" class="form-label">Amount:</label>
+    <input
+      type="number"
+      class="form-control"
+      id="amount"
+      placeholder=""
+      name="amount"
+      formControlName="amount"
+    />
+    <div
+      class="invalid-field"
+      *ngIf="form.controls.amount?.invalid && form.controls.amount?.touched"
+    >
+      Amount is required.
+    </div>
+  </div>
+  <div class="mb-3 mt-3">
+    <label for="category" class="form-label">Category:</label>
+    <input
+      type="text"
+      class="form-control"
+      id="category"
+      placeholder=""
+      name="category"
+      formControlName="category"
+    />
+    <div
+      class="invalid-field"
+      *ngIf="form.controls.category?.invalid && form.controls.category?.touched"
+    >
+      Category is required.
+    </div>
+  </div>
+  <div class="mb-3">
+    <label for="date" class="form-label">Date:</label>
+    <input
+      type="date"
+      class="form-control"
+      id="date"
+      placeholder=""
+      name="date"
+      formControlName="date"
+    />
+    <div
+      class="invalid-field"
+      *ngIf="form.controls.date?.invalid && form.controls.date?.touched"
+    >
+      Date is required.
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="btn btn-primary"
+    (click)="createNewExpense()"
+    [disabled]="form.invalid"
+  >
+    Create New Expense
+  </button>
+</form>
