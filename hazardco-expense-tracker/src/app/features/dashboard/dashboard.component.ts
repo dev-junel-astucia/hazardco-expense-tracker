@@ -1,7 +1,11 @@
 import { Component, effect, inject } from '@angular/core';
 import { SharedModule } from '../../shared/shared-module';
 import { Store } from '@ngrx/store';
-import { GetAllExpenses, selectExpenses } from '../../state/expense';
+import {
+  GetAllExpenses,
+  ResetExpenseState,
+  selectExpenses,
+} from '../../state/expense';
 import { ExpenseDetails } from '../../shared/model/expense-details.model';
 import { ChartData } from 'chart.js';
 
@@ -14,6 +18,9 @@ import { ChartData } from 'chart.js';
 })
 export class DashboardComponent {
   #store = inject(Store);
+  test: ExpenseDetails[] = [
+    { amount: 0, category: 'test', date: '', id: '1', title: 'test' },
+  ];
   expenses = this.#store.selectSignal(selectExpenses);
 
   chartType: 'bar' = 'bar';

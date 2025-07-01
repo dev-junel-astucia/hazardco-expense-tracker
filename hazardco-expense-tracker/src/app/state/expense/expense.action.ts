@@ -16,6 +16,10 @@ export const CreateExpense = createAction(
   ExpenseActionTypes.CREATE_EXPENSE,
   props<ExpenseRequest>()
 );
+export const SelectExpenseItem = createAction(
+  ExpenseActionTypes.SELECT_EXPENSE_ITEM,
+  props<ExpenseDetails>()
+);
 export const UpdateExpenseById = createAction(
   ExpenseActionTypes.UPDATE_EXPENSE_BY_ID,
   props<ExpenseDetails>()

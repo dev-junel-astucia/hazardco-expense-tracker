@@ -11,3 +11,13 @@ export const selectExpenseRequest = createSelector(
   selectExpenseState,
   (state) => state.request || []
 );
+
+export const selectedExpenseId = createSelector(
+  selectExpenseState,
+  (state) => state.selectedId.id
+);
+
+export const selectedExpenseItem = createSelector(
+  selectExpenseState,
+  (state) => state.selectedItem
+);

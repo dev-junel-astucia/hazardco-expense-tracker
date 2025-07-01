@@ -1,1 +1,34 @@
-<div class="container">list here</div>
+<div class="container mt-3">
+  <h5>Expense List</h5>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">Title</th>
+        <th scope="col">Category</th>
+        <th scope="col">Amount</th>
+        <th scope="col">Date</th>
+        <th scope="col">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let expense of formattedExpenses">
+        <th>
+          <a href="#" (click)="selectExpense($event, expense)">{{
+            expense.title
+          }}</a>
+        </th>
+        <td>{{ expense.category }}</td>
+        <td>{{ expense.amount }}</td>
+        <td>{{ expense.formattedDate }}</td>
+        <td>
+          <button
+            class="btn btn-sm btn-danger"
+            (click)="deleteExpense(expense.id)"
+          >
+            Delete
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

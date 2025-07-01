@@ -81,8 +81,18 @@
           class="btn btn-primary"
           (click)="createNewExpense()"
           [disabled]="form.invalid"
+          *ngIf="!selectedItem"
         >
           Create New Expense
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="updateExpenseById(selectedItem)"
+          [disabled]="form.invalid"
+          *ngIf="selectedItem"
+        >
+          Update Expense
         </button>
       </div>
     </div>

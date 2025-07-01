@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import {
@@ -16,15 +16,20 @@ import {
   ExpenseApiError,
   ExpenseApiSuccess,
   GetAllExpenses,
+  ResetExpenseState,
 } from './expense.action';
-import { selectExpenseRequest } from './expense.selector';
-import { ExpenseRequest } from '../../shared/model/expense-details.model';
+import { selectedExpenseId, selectExpenseRequest } from './expense.selector';
+import {
+  ExpenseDetails,
+  ExpenseRequest,
+} from '../../shared/model/expense-details.model';
 
 @Injectable()
 export class ExpenseEffect {
+  #store = inject(Store);
+
   constructor(
     private actions$: Actions,
-    public store: Store,
     private expenseService: ExpenseService
   ) {}
 
@@ -51,7 +56,9 @@ export class ExpenseEffect {
     return this.actions$.pipe(
       ofType(ExpenseActionTypes.CREATE_EXPENSE),
       concatMap((action) =>
-        of(action).pipe(withLatestFrom(this.store.select(selectExpenseRequest)))
+        of(action).pipe(
+          withLatestFrom(this.#store.select(selectExpenseRequest))
+        )
       ),
       mergeMap(([, expenseRequest]: [any, ExpenseRequest]) => {
         const request: ExpenseRequest = {
@@ -65,6 +72,59 @@ export class ExpenseEffect {
             if (response.statusCode !== 201) {
               return ExpenseApiError(response);
             }
+            this.#store.dispatch(ResetExpenseState());
+            return GetAllExpenses();
+          }),
+          catchError((error) => {
+            return of(ExpenseApiError(error));
+          })
+        );
+      })
+    );
+  });
+
+  updateExpenseEffect$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ExpenseActionTypes.UPDATE_EXPENSE_BY_ID),
+      concatMap((action) =>
+        of(action).pipe(
+          withLatestFrom(this.#store.select(selectExpenseRequest))
+        )
+      ),
+      mergeMap(([, expenseRequest]: [any, ExpenseDetails]) => {
+        const request: ExpenseDetails = {
+          id: expenseRequest.id,
+          title: expenseRequest.title,
+          category: expenseRequest.category,
+          amount: expenseRequest.amount,
+          date: expenseRequest.date,
+        };
+        return this.expenseService.updateExpense(request).pipe(
+          map((response: any) => {
+            if (response.statusCode !== 200) {
+              return ExpenseApiError(response);
+            }
+            this.#store.dispatch(ResetExpenseState());
+            return GetAllExpenses();
+          }),
+          catchError((error) => {
+            return of(ExpenseApiError(error));
+          })
+        );
+      })
+    );
+  });
+
+  deleteExpenseEffect$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(ExpenseActionTypes.DELETE_EXPENSE_BY_ID),
+      concatMap((action) =>
+        of(action).pipe(withLatestFrom(this.#store.select(selectedExpenseId)))
+      ),
+      mergeMap(([, selectedId]: [any, string]) => {
+        return this.expenseService.deleteExpenseById(selectedId).pipe(
+          map(() => {
+            this.#store.dispatch(ResetExpenseState());
             return GetAllExpenses();
           }),
           catchError((error) => {

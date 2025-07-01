@@ -7,27 +7,32 @@ import {
   GetAllExpenseById,
   ResetExpenseState,
   UpdateExpenseById,
+  SelectExpenseItem,
 } from './expense.action';
 
 export const initialExpenseState = {};
 
 export const expenseReducer = createReducer(
   initialExpenseState,
-  on(GetAllExpenseById, (state, payload): any => ({
+  on(GetAllExpenseById, (state, selectedId): any => ({
     ...state,
-    ...payload,
+    selectedId,
   })),
   on(CreateExpense, (state, request): any => ({
     ...state,
     request,
   })),
-  on(UpdateExpenseById, (state, payload): any => ({
+  on(SelectExpenseItem, (state, selectedItem): any => ({
     ...state,
-    ...payload,
+    selectedItem,
   })),
-  on(DeleteExpenseById, (state, payload): any => ({
+  on(UpdateExpenseById, (state, request): any => ({
     ...state,
-    ...payload,
+    request,
+  })),
+  on(DeleteExpenseById, (state, selectedId): any => ({
+    ...state,
+    selectedId,
   })),
   on(ExpenseApiSuccess, (state, success): any => ({
     ...state,

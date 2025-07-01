@@ -1,8 +1,16 @@
-import { Component, effect, inject, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Store } from '@ngrx/store';
-import { CreateExpense, selectExpenseRequest } from '../../../state/expense';
+import { DeleteExpenseById, SelectExpenseItem } from '../../../state/expense';
 import { ExpenseDetails } from '../../model/expense-details.model';
 
 @Component({
@@ -12,37 +20,36 @@ import { ExpenseDetails } from '../../model/expense-details.model';
   styleUrl: './expense-detail-list.component.scss',
   standalone: true,
 })
-export class ExpenseDetailListComponent {
+export class ExpenseDetailListComponent implements OnChanges {
+  #store = inject(Store);
+
   @Input() expenses: ExpenseDetails[] = [];
 
-  constructor() {
-    // effect(() => {
-    //   if (this.request()) {
-    //     this.resetForm();
-    //   }
-    // });
-    console.log('here', this.expenses);
+  formattedExpenses: Array<ExpenseDetails & { formattedDate: string }> = [];
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['expenses']) {
+      this.formattedExpenses = this.expenses.map((e) => ({
+        ...e,
+        formattedDate: this.formatDateShort(e.date),
+      }));
+    }
   }
 
-  // createNewExpense() {
-  //   if (this.form.valid) {
-  //     this.#store.dispatch(
-  //       CreateExpense({
-  //         title: this.form.get('title')!.value,
-  //         category: this.form.get('category')!.value,
-  //         amount: this.form.get('amount')!.value,
-  //         date: new Date(this.form.get('date')!.value).toISOString(),
-  //       })
-  //     );
-  //   }
-  // }
+  private formatDateShort(dateStr: string): string {
+    const d = new Date(dateStr);
+    const dd = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return `${dd}/${mm}/${yyyy}`;
+  }
 
-  // resetForm(): void {
-  //   this.form.reset({
-  //     title: '',
-  //     amount: 0,
-  //     category: '',
-  //     date: '',
-  //   });
-  // }
+  selectExpense(event: Event, expense: ExpenseDetails) {
+    event.preventDefault();
+    this.#store.dispatch(SelectExpenseItem(expense));
+  }
+
+  deleteExpense(expenseId: string) {
+    this.#store.dispatch(DeleteExpenseById({ id: expenseId }));
+  }
 }
