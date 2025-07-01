@@ -1,3 +1,13 @@
-<main class="container mt-5">
-  <hc-expense-details></hc-expense-details>
+<main class="container-fluid">
+  <div class="mb-3"><hc-expense-details></hc-expense-details></div>
+  <div class="mb-3">
+    <hc-expense-detail-list></hc-expense-detail-list>
+  </div>
+  <div>
+    <hc-chart
+      [chartType]="chartType"
+      [chartOptions]="chartOptions"
+      [chartData]="chartData"
+    ></hc-chart>
+  </div>
 </main>

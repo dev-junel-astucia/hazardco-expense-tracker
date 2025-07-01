@@ -1,39 +1,54 @@
-import { Component } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   ExpenseDetailsForm,
   injectExpenseDetailsForm,
 } from './expense-details.form';
 import { CommonModule } from '@angular/common';
-
-type ControlName = keyof ExpenseDetailsForm['controls'];
+import { Store } from '@ngrx/store';
+import { CreateExpense, selectExpenseRequest } from '../../../state/expense';
 
 @Component({
   selector: 'hc-expense-details',
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './expense-details.component.html',
   styleUrl: './expense-details.component.scss',
+  standalone: true,
 })
 export class ExpenseDetailsComponent {
+  #store = inject(Store);
   readonly form = injectExpenseDetailsForm();
+  categories: string[] = ['Food', 'Transport', 'Utilities', 'Entertainment'];
+
+  request = this.#store.selectSignal(selectExpenseRequest);
+
+  constructor() {
+    effect(() => {
+      if (this.request()) {
+        this.resetForm();
+      }
+    });
+  }
 
   createNewExpense() {
     if (this.form.valid) {
-      console.log(this.form.value);
-    } else {
-      console.log('Form is invalid');
+      this.#store.dispatch(
+        CreateExpense({
+          title: this.form.get('title')!.value,
+          category: this.form.get('category')!.value,
+          amount: this.form.get('amount')!.value,
+          date: new Date(this.form.get('date')!.value).toISOString(),
+        })
+      );
     }
+  }
 
-    // const username = this.usernameForm.get('username').value;
-    // const formattedUsername = this.formatUsername(username);
-    // const usernameType = this.isEmail ? 'eMail' : 'SMS';
-    // const usernamePayload: NotificationChangeUsernameRequest = {
-    //     transactionId: this.generateTransactionId(),
-    //     sourceIdentifier: 'mtnid',
-    //     'input-type': usernameType,
-    //     'input-data': formattedUsername,
-    // };
-
-    // this.store.dispatch(PostNotificationChangeUsername(usernamePayload));
+  resetForm(): void {
+    this.form.reset({
+      title: '',
+      amount: 0,
+      category: '',
+      date: '',
+    });
   }
 }

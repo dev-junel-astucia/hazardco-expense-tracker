@@ -4,25 +4,24 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { ExpenseDetails } from './expense-details.model';
+import { ExpenseRequest } from '../../model/expense-details.model';
 
 export type ExpenseDetailsForm = ReturnType<typeof injectExpenseDetailsForm>;
 
 export function injectExpenseDetailsForm() {
   const fb = inject(NonNullableFormBuilder);
 
-  const initialValues: ExpenseDetails = {
-    id: '',
+  const initialValues: ExpenseRequest = {
     title: '',
     amount: 0,
     category: '',
     date: '',
   };
 
-  const controlField = (
-    fieldName: Exclude<keyof ExpenseDetails, 'id'>,
+  const controlField = <K extends keyof ExpenseRequest>(
+    fieldName: K,
     validators?: ValidatorFn | ValidatorFn[]
-  ) => fb.control(initialValues?.[fieldName] ?? '', validators);
+  ) => fb.control<ExpenseRequest[K]>(initialValues[fieldName], validators);
 
   const { required } = Validators;
 
