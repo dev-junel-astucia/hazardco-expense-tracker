@@ -9,6 +9,8 @@ Built on Angular v17
 
 On the `app` folder (hazardco-expense-tracker), open the terminal (integrated terminal if you're in VS Code)
 
+Run `npm install`
+
 Run `npm start` to start the server. Navigate to http://localhost:4200/.
 
 ## Frontend-Api (backend)
